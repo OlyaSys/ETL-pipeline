@@ -23,7 +23,7 @@
 | DATABASE_URL              | `str` | `postgresql+psycopg2://postgres:postgres@postgres:5432/credistory` | URL для доступа к базе данных                                                 |
 | POSTGRES_USER   | `str` |   `postgres`   | Пользователь            |
 | POSTGRES_PASSWORD | `str` |  `postgres`  | Пароль |
-| POSTGRES_DB             | `str` |        название БД        `credistory`                 |                                                      |
+| POSTGRES_DB             | `str` |      `credistory`                 |        название БД                                |
 
 ## Запуск
 
