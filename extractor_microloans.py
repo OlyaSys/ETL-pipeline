@@ -8,7 +8,8 @@ from playwright.sync_api import sync_playwright, TimeoutError, Page, BrowserCont
 from utils import logger
 
 MICROLOANS_URL = "https://credistory.ru/market/microloans"
-OUTPUT_RAW = Path("microloans.json")
+OUTPUT_RAW = Path("./data/microloans.json")
+COOKIE_FILE = Path("./data/cookies.json")
 
 
 def action_log(description: str):
@@ -90,10 +91,12 @@ def prepare_rows_for_db(offers: dict):
 
 
 def load_cookies(ctx: BrowserContext):
-    if os.path.exists("cookies.json"):
+    if os.path.exists(COOKIE_FILE):
+        logger.info("Start loading cookies from file")
         try:
-            with open("cookies.json") as f:
+            with open(COOKIE_FILE) as f:
                 ctx.add_cookies(json.load(f))
+                logger.info("End loading cookies from file")
                 return
         except Exception as e:
             logger.warning(f"Failed to load cookies.json: {e}")
@@ -101,9 +104,9 @@ def load_cookies(ctx: BrowserContext):
 
 
 def save_cookies(cookies: list):
-    if cookies and not os.path.exists("cookies.json"):
+    if cookies and not os.path.exists(COOKIE_FILE):
         try:
-            with open("cookies.json", "w") as f:
+            with open(COOKIE_FILE, "w") as f:
                 json.dump(cookies, f)
         except Exception as e:
             logger.warning(f"Failed to save cookies.json: {e}")
@@ -120,9 +123,7 @@ def extract_microloans():
                 )
             )
 
-            logger.info("Start loading cookies from file")
             load_cookies(context)
-            logger.info("End loading cookies from file")
 
             page = context.new_page()
 

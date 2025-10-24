@@ -27,7 +27,11 @@
 
 ## Запуск
 
-1. Выполните создание общей сети
+1. Создайте папку для хранения cookies
+    ```bash
+   mkdir data
+   ```
+2. Создайте сеть
    ```bash
    docker network create extractor-network
    ```

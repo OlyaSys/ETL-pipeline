@@ -6,7 +6,7 @@ import dateparser
 from utils import logger
 
 START_URL   = "https://credistory.ru/finrating"
-STATE_FILE  = Path(__file__).with_name("state_reviews.json")
+STATE_FILE  = Path("./data/state_reviews.json")
 MAX_PAGES   = 10
 
 CARD_SEL    = "mt-ugc-review-card"
@@ -35,6 +35,7 @@ def save_state(state: dict):
 def collect_reviews_on_page(page: Page):
     cards = page.locator(CARD_SEL)
     n = cards.count()
+    logger.info(f"Start collecting reviews from {n} cards")
     reviews = []
     for i in range(n):
         card = cards.nth(i)
@@ -79,7 +80,10 @@ def extract_reviews():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
 
-        context = browser.new_context()
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0 Safari/537.36",
+            viewport={"width": 1366, "height": 900},
+        )
         page = context.new_page()
 
         page.goto(START_URL, wait_until="domcontentloaded")
@@ -103,7 +107,6 @@ def extract_reviews():
     new_reviews = [x for x in reviews if x.get("ext_id") and x["ext_id"] not in prev_ids]
 
     save_state({"seen_ids": curr_ids})
-    logger.info(reviews)
     logger.info("Stop extracting reviews")
     return new_reviews
 
